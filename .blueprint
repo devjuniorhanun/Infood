@@ -1,0 +1,41 @@
+created:
+    - database/factories/Models/TenantFactory.php
+    - database/factories/Models/PlanoFactory.php
+    - database/factories/Models/DetalhePlanoFactory.php
+    - database/factories/Models/CategoriaFactory.php
+    - database/factories/Models/ProdutoFactory.php
+    - database/factories/Models/MesaFactory.php
+    - database/factories/Models/ClienteFactory.php
+    - database/factories/Models/PedidoFactory.php
+    - database/factories/Models/AvaliacaoFactory.php
+    - database/migrations/2021_02_16_132753_create_tenants_table.php
+    - database/migrations/2021_02_16_132754_create_planos_table.php
+    - database/migrations/2021_02_16_132755_create_detalhe_planos_table.php
+    - database/migrations/2021_02_16_132756_create_categorias_table.php
+    - database/migrations/2021_02_16_132757_create_produtos_table.php
+    - database/migrations/2021_02_16_132758_create_mesas_table.php
+    - database/migrations/2021_02_16_132759_create_clientes_table.php
+    - database/migrations/2021_02_16_132800_create_pedidos_table.php
+    - database/migrations/2021_02_16_132801_create_avaliacaos_table.php
+    - database/migrations/2021_02_16_132802_create_categoria_produto_table.php
+    - database/migrations/2021_02_16_132803_create_pedido_produto_table.php
+    - app/Models/Tenant.php
+    - app/Models/Plano.php
+    - app/Models/DetalhePlano.php
+    - app/Models/Categoria.php
+    - app/Models/Produto.php
+    - app/Models/Mesa.php
+    - app/Models/Cliente.php
+    - app/Models/Pedido.php
+    - app/Models/Avaliacao.php
+models:
+    Models\User: { uuid: 'string:36', name: string, email: string, email_verified_at: 'datetime nullable', password: string, two_factor_secret: 'text nullable', two_factor_recovery_codes: 'text nullable', remember_token: 'string:100 nullable', current_team_id: 'biginteger unsigned nullable', profile_photo_path: 'text nullable' }
+    Models\Tenant: { uuid: uuid, nome: 'string unique', cnpj: 'string unique', url: 'string nullable', email: 'string unique', telefone: 'string nullable', logo: 'string nullable', status: 'enum:ATIVA,DESATIVADA', softdeletes: softDeletes, timestamps: timestamps }
+    Models\Plano: { uuid: uuid, nome: 'string unique', url: 'string nullable', valor: 'double:10,2 nullable', descricao: 'text nullable', status: 'enum:ATIVO,DESATIVADO,BLOQUEADO', softdeletes: softDeletes, timestamps: timestamps, relationships: { hasMany: 'Tenant, DetalhePlano' } }
+    Models\DetalhePlano: { plano_id: 'id foreign', uuid: uuid, detalhe: 'string nullable', softdeletes: softDeletes, timestamps: timestamps }
+    Models\Categoria: { tenant_id: 'id foreign', uuid: uuid, nome: 'string nullable', url: 'string nullable', descricao: 'string nullable', status: 'enum:ATIVA,DESATIVADA', softdeletes: softDeletes, timestamps: timestamps, relationships: { belongsToMany: Produto } }
+    Models\Produto: { tenant_id: 'id foreign', uuid: uuid, nome: string, flag: 'string nullable', image: 'string nullable', valor: 'double:10,2 nullable', descricao: 'string nullable', status: 'enum:ATIVO,DESATIVADO', softdeletes: softDeletes, timestamps: timestamps, relationships: { belongsToMany: 'Categoria, Pedido' } }
+    Models\Mesa: { tenant_id: 'id foreign', uuid: uuid, nome: 'string unique', descricao: 'string nullable', status: 'enum:ATIVA,DESATIVADA', softdeletes: softDeletes, timestamps: timestamps }
+    Models\Cliente: { tenant_id: 'id foreign', uuid: uuid, nome: 'string unique', email: 'string unique', senha: string, status: 'enum:ATIVO,DESATIVADO,BLOQUEADO', softdeletes: softDeletes, timestamps: timestamps, relationships: { hasMany: 'Pedido, Avaliacao' } }
+    Models\Pedido: { tenant_id: 'id foreign', cliente_id: 'id foreign', mesa_id: 'id foreign nullable', uuid: uuid, valor: 'double:10,2 nullable', comentario: 'string nullable', status: 'enum:ABERTO,FECHADO,FAZENDO,REJEITADO,CANCELADO,ENTREGA', softdeletes: softDeletes, timestamps: timestamps, relationships: { belongsToMany: Produto, hasMany: Avaliacao } }
+    Models\Avaliacao: { tenant_id: 'id foreign', cliente_id: 'id foreign', pedido_id: 'id foreign nullable', uuid: uuid, qtn_estrela: 'integer nullable', comentario: 'string nullable', softdeletes: softDeletes, timestamps: timestamps }

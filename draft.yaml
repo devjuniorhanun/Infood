@@ -1,0 +1,104 @@
+models:
+  Models\Tenant:
+    uuid: uuid
+    nome: string unique
+    cnpj: string unique
+    url: string nullable
+    email: string unique
+    telefone: string nullable
+    logo: string nullable
+    status: enum:ATIVA,DESATIVADA
+    softDeletes: true
+    timestamps: true
+
+  Models\Plano:
+    uuid: uuid
+    nome: string unique
+    url: string nullable
+    valor: double:10,2 nullable
+    descricao: text nullable
+    status: enum:ATIVO,DESATIVADO,BLOQUEADO
+    softDeletes: true
+    timestamps: true
+    relationships:
+      hasMany: Tenant, DetalhePlano
+
+  Models\DetalhePlano:
+    plano_id: id foreign
+    uuid: uuid
+    detalhe: string nullable
+    softDeletes: true
+    timestamps: true
+
+  Models\Categoria:
+    tenant_id: id foreign
+    uuid: uuid
+    nome: string nullable
+    url: string nullable
+    descricao: string nullable
+    status: enum:ATIVA,DESATIVADA
+    softDeletes: true
+    timestamps: true
+    relationships:
+      belongsToMany: Produto
+
+  Models\Produto:
+    tenant_id: id foreign
+    uuid: uuid
+    nome: string
+    flag: string nullable
+    image: string nullable
+    valor: double:10,2 nullable
+    descricao: string nullable
+    status: enum:ATIVO,DESATIVADO
+    softDeletes: true
+    timestamps: true
+    relationships:
+      belongsToMany: Categoria, Pedido
+
+  Models\Mesa:
+    tenant_id: id foreign
+    uuid: uuid
+    nome: string unique
+    descricao: string nullable
+    status: enum:ATIVA,DESATIVADA
+    softDeletes: true
+    timestamps: true
+
+  Models\Cliente:
+    tenant_id: id foreign
+    uuid: uuid
+    nome: string unique
+    email: string unique
+    senha: string
+    status: enum:ATIVO,DESATIVADO,BLOQUEADO
+    softDeletes: true
+    timestamps: true
+    relationships:
+      hasMany: Pedido, Avaliacao
+
+  Models\Pedido:
+    tenant_id: id foreign
+    cliente_id: id foreign
+    mesa_id: id foreign nullable
+    uuid: uuid
+    valor: double:10,2 nullable
+    comentario: string nullable
+    status: enum:ABERTO,FECHADO,FAZENDO,REJEITADO,CANCELADO,ENTREGA
+    softDeletes: true
+    timestamps: true
+    relationships:
+      belongsToMany: Produto
+      hasMany: Avaliacao
+
+  Models\Avaliacao:
+    tenant_id: id foreign
+    cliente_id: id foreign
+    pedido_id: id foreign nullable
+    uuid: uuid
+    qtn_estrela: integer nullable
+    comentario: string nullable
+    softDeletes: true
+    timestamps: true
+
+
